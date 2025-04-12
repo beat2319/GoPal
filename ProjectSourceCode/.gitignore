@@ -146,3 +146,7 @@ uploads/
 
 # MacOS
 .DS_Store
+
+# Local config files to protect
+*.json
+docker-compose.yaml
