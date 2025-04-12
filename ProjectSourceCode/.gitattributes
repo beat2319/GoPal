@@ -1,0 +1,3 @@
+package.json merge=ours
+docker-compose.yaml merge=ours
+.gitignore merge=ours
