@@ -19,7 +19,7 @@
     "prestart": "npm install",
     "start": "concurrently \"npx tailwindcss -i ./extra_resources/css/input.css -o ./extra_resources/css/style.css --watch\" \"nodemon ./server/index.js\"",
     "build:css": "npx tailwindcss -i ./extra_resources/css/input.css -o ./extra_resources/css/style.css",
-    "start:prod": "npm run build:css && node server/index.js"
+    "start:prod": "npm run start"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.17",
