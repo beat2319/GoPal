@@ -58,6 +58,20 @@ if (window.location.pathname === "/settings/profile") {
         defaultIcon.classList.add("hidden");
       }
     });
+
+    // Character counter for bio field
+    const bioField = document.getElementById("userBio");
+    const bioCharCount = document.getElementById("bioCharCount");
+    
+    if (bioField && bioCharCount) {
+        // Set initial count on page load based on existing bio
+        bioCharCount.textContent = bioField.value.length;
+        
+        // Update count as user types
+        bioField.addEventListener("input", function() {
+            bioCharCount.textContent = this.value.length;
+        });
+    }
   });
 }
 
@@ -208,3 +222,33 @@ if (window.location.pathname === "/settings/pal-settings") {
     console.error("Error loading character customization script:", err);
   });
 }
+// Separate DOMContentLoaded listener for Journal Modal logic
+document.addEventListener("DOMContentLoaded", function () {
+  // --- Journal Modal Elements ---
+  const journalModal = document.getElementById("journal-modal");
+  const journalForm = document.getElementById("journal-form");
+  const journalCloseModalButton = document.getElementById("journal-close-modal-button");
+  const journalCancelButton = document.getElementById("journal-cancel-button"); 
+  const journalAddButton = document.getElementById("journal-add-button");
+
+  if (journalAddButton) {
+    journalAddButton.addEventListener("click", function () {
+      journalModal.classList.remove("hidden");
+      journalModal.classList.add("flex");
+    });
+  }
+
+  function closeModal() {
+    journalModal.classList.add("hidden");
+    journalModal.classList.remove("flex");
+    journalForm.reset();
+  }
+
+  if (journalCloseModalButton) {
+    journalCloseModalButton.addEventListener("click", closeModal);
+  }
+
+  if (journalCancelButton) {
+    journalCancelButton.addEventListener("click", closeModal);
+  }
+}); 
