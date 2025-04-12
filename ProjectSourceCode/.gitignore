@@ -149,4 +149,5 @@ uploads/
 
 # Local config files to protect
 *.json
+docker-compose.yamlpackage.json
 docker-compose.yaml
