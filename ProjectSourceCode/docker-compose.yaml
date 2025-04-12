@@ -11,8 +11,7 @@ services:
     networks:
       - gopal_net
   web:
-    image: node:lts
-    user: 'node' #you can remove this if you are facing access issues when installing node packages
+    image: node:lts #you can remove this if you are facing access issues when installing node packages
     working_dir: /home/node/app
     env_file: .env
     environment:
