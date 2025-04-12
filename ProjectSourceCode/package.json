@@ -19,15 +19,10 @@
     "prestart": "npm install",
     "start": "concurrently \"npx tailwindcss -i ./extra_resources/css/input.css -o ./extra_resources/css/style.css --watch\" \"nodemon ./server/index.js\"",
     "build:css": "npx tailwindcss -i ./extra_resources/css/input.css -o ./extra_resources/css/style.css",
-    "start:prod": "npm run build:css && node index.js",
-    "test": "mocha",
-    "testandrun": "if [ \"$NODE_ENV\" = \"production\" ]; then npm run prestart && npm run start:prod; else npm run prestart && npm run test && npm run start; fi"
+    "start:prod": "npm run build:css && node server/index.js"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.17",
-    "chai": "^4.2.0",
-    "chai-http": "^4.3.0",
-    "mocha": "^6.2.2",
     "tailwindcss": "^4.0.17"
   }
 }
