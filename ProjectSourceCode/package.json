@@ -1,6 +1,6 @@
 {
   "name": "gopal",
-  "main": "index.js",
+  "main": "server/index.js",
   "dependencies": {
     "bcryptjs": "^2.4.0",
     "body-parser": "1.20.0",
@@ -17,9 +17,9 @@
   },
   "scripts": {
     "prestart": "npm install",
-    "start": "concurrently \"npx tailwindcss -i ./extra_resources/css/input.css -o ./extra_resources/css/style.css --watch\" \"nodemon ./index.js\"",
+    "start": "concurrently \"npx tailwindcss -i ./extra_resources/css/input.css -o ./extra_resources/css/style.css --watch\" \"nodemon ./server/index.js\"",
     "build:css": "npx tailwindcss -i ./extra_resources/css/input.css -o ./extra_resources/css/style.css",
-    "start:prod": "npm run build:css && node index.js"
+    "start:prod": "npm run build:css && node server/index.js"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.17",
