@@ -978,4 +978,6 @@ app.get('/weatherAPI', auth, async (req, res) => {
 });
 
 //Ensure App is Listening For Requests
-module.exports = app.listen(3000);
+module.exports = app.listen(8080, '0.0.0.0', () => {
+    console.log('Server running on port 8080');
+  });
