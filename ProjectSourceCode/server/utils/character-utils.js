@@ -118,6 +118,8 @@ async function awardXp(userId, xpAmount, reason) {
       currentCharacter = await createDefaultCharacter(userId);
     }
     
+    currentCharacter.xp = currentCharacter.xp || 0;
+
     const newXp = currentCharacter.xp + xpAmount;
     
     // Determine new level based on XP
