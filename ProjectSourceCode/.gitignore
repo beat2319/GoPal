@@ -148,5 +148,6 @@ uploads/
 .DS_Store
 
 # Local config files to protect
-package.json
+# The package.json will fuck up deployment big time, do not forget to remove before deployment!!!!
+package.json 
 docker-compose.yaml
