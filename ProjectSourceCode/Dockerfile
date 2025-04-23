@@ -7,6 +7,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 RUN ls -la /app
 
+# The git ignore includes a package.json, make sure to comment out before deploying
 COPY package.json ./
 COPY package-lock.json ./
 
