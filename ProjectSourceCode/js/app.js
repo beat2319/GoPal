@@ -124,6 +124,9 @@ if (window.location.pathname === "/settings/account") {
 document.addEventListener("DOMContentLoaded", function () {
   // Activity Modal - Adding Activity
   const activityModal = document.getElementById("activity-modal");
+  const addFirstActivityButton = document.getElementById(
+    "add-first-activity-btn"
+  );
   const activityForm = document.getElementById("activity-form");
   const closeModalButton = document.getElementById("close-modal-button");
   const cancelButton = document.getElementById("cancel-button");
@@ -150,12 +153,19 @@ document.addEventListener("DOMContentLoaded", function () {
     timeInput.value = `${hours}:${minutes}`;
   }
 
-  // Open modal when "Add Activity" button is clicked
-  if (addActivityButton) {
-    addActivityButton.addEventListener("click", function () {
+  function openActivityModal() {
+    if (activityModal) {
       activityModal.classList.remove("hidden");
       activityModal.classList.add("flex");
-    });
+    }
+  }
+
+  if (addActivityButton) {
+    addActivityButton.addEventListener("click", openActivityModal);
+  }
+
+  if (addFirstActivityButton) {
+    addFirstActivityButton.addEventListener("click", openActivityModal);
   }
 
   // Close modal functions
@@ -173,6 +183,80 @@ document.addEventListener("DOMContentLoaded", function () {
     cancelButton.addEventListener("click", closeModal);
   }
 
+  const durationHoursInput = document.getElementById("activity-duration-hours");
+  const durationMinutesInput = document.getElementById(
+    "activity-duration-minutes"
+  );
+  const hiddenDurationInput = document.getElementById("activity-duration");
+
+  if (
+    activityForm &&
+    durationHoursInput &&
+    durationMinutesInput &&
+    hiddenDurationInput
+  ) {
+    activityForm.addEventListener("submit", function (event) {
+      // Get hours and minutes, treating empty strings as 0
+      const hours =
+        durationHoursInput.value.trim() === ""
+          ? 0
+          : parseInt(durationHoursInput.value, 10);
+      const minutes =
+        durationMinutesInput.value.trim() === ""
+          ? 0
+          : parseInt(durationMinutesInput.value, 10);
+
+      // Check if parsing resulted in NaN (invalid input)
+      if (isNaN(hours) || isNaN(minutes)) {
+        event.preventDefault();
+        alert("Please enter valid numbers for duration hours and minutes.");
+        return;
+      }
+
+      const totalMinutes = hours * 60 + minutes;
+
+      if (totalMinutes <= 0) {
+        event.preventDefault(); // Stop form submission
+        alert("Please enter a duration greater than 0 minutes.");
+        durationHoursInput.focus();
+      } else {
+        // Set the hidden input value to the total minutes
+        hiddenDurationInput.value = totalMinutes;
+        // Form will now submit with a valid integer for duration_minutes
+      }
+    });
+  }
+
+  // Handle filter badge clear buttons
+  const filterClearButtons = document.querySelectorAll("[data-clear]");
+  filterClearButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      const paramName = this.getAttribute("data-clear");
+
+      // Create a URL with the parameter removed
+      const url = new URL(window.location);
+
+      // Set the parameter to its default value
+      if (paramName === "type") {
+        url.searchParams.set("type", "all");
+      } else if (paramName === "dateRange") {
+        url.searchParams.set("dateRange", "week");
+      }
+
+      // Navigate to the modified URL
+      window.location.href = url.toString();
+    });
+  });
+
+  // Handle the "Clear Filters" button
+  const clearFiltersBtn = document.getElementById("clear-filters-btn");
+  if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener("click", function () {
+      // Redirect to the base activity page without query params
+      window.location.href = "/activity";
+    });
+  }
+
   // Notification Dropdown
   const notificationIcon = document.getElementById("notification-icon");
   const notificationDropdown = document.getElementById("notification-dropdown");
@@ -185,9 +269,11 @@ document.addEventListener("DOMContentLoaded", function () {
   // Close dropdown when clicking outside
   document.addEventListener("click", function (event) {
     // Check if dropdown is visible and the click is outside the dropdown and icon
-    if (!notificationDropdown.classList.contains("hidden") &&
+    if (
+      !notificationDropdown.classList.contains("hidden") &&
       !notificationDropdown.contains(event.target) &&
-      event.target !== notificationIcon) {
+      event.target !== notificationIcon
+    ) {
       notificationDropdown.classList.add("hidden");
     }
   });
@@ -212,6 +298,120 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Error marking notifications as read:", error)
       );
   });
+
+  // Activity menu dropdown functionality
+  const menuButtons = document.querySelectorAll('.activity-menu-button');
+  
+  if (menuButtons.length > 0) {
+    // Toggle dropdown when menu button is clicked
+    menuButtons.forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevent event from bubbling up
+        
+        const activityId = this.getAttribute('data-activity-id');
+        const menuElement = document.getElementById(`menu-${activityId}`);
+        
+        // Close all other open menus first
+        document.querySelectorAll('.activity-menu').forEach(menu => {
+          if (menu.id !== `menu-${activityId}`) {
+            menu.classList.add('hidden');
+          }
+        });
+        
+        // Toggle this menu
+        menuElement.classList.toggle('hidden');
+      });
+    });
+    
+    // Close dropdown when clicking anywhere else on the page
+    document.addEventListener('click', function() {
+      document.querySelectorAll('.activity-menu').forEach(menu => {
+        menu.classList.add('hidden');
+      });
+    });
+    
+    // Prevent clicks inside dropdown from closing it
+    document.querySelectorAll('.activity-menu').forEach(menu => {
+      menu.addEventListener('click', function(e) {
+        e.stopPropagation();
+      });
+    });
+  }
+
+  // Edit Activity Modal
+  const editActivityModal = document.getElementById("edit-activity-modal");
+  const editActivityForm = document.getElementById("edit-activity-form");
+  const editCloseModalButton = document.getElementById("edit-close-modal-button");
+  const editCancelButton = document.getElementById("edit-cancel-button");
+  const editActivityButtons = document.querySelectorAll(".edit-activity-button");
+
+  // Open edit activity modal when an edit button is clicked
+  if (editActivityButtons.length > 0) {
+    editActivityButtons.forEach(button => {
+      button.addEventListener("click", function() {
+        // Get activity data from data attributes
+        const activityId = this.getAttribute("data-activity-id");
+        const activityTypeId = this.getAttribute("data-activity-type-id");
+        const activityName = this.getAttribute("data-activity-name");
+        const activityDuration = this.getAttribute("data-activity-duration");
+        const activityDistance = this.getAttribute("data-activity-distance");
+        const activityDate = this.getAttribute("data-activity-date");
+        const activityTime = this.getAttribute("data-activity-time");
+        const activityNotes = this.getAttribute("data-activity-notes");
+
+        // Set values in the edit form
+        document.getElementById("edit-activity-id").value = activityId;
+        
+        // Find and select the appropriate option in the dropdown
+        const typeSelect = document.getElementById("edit-activity-type");
+        for (let i = 0; i < typeSelect.options.length; i++) {
+          if (typeSelect.options[i].text === activityName) {
+            typeSelect.selectedIndex = i;
+            break;
+          }
+        }
+        
+        document.getElementById("edit-activity-duration").value = activityDuration;
+        document.getElementById("edit-activity-distance").value = activityDistance;
+        
+        // Format date for input (yyyy-MM-dd)
+        if (activityDate) {
+          const date = new Date(activityDate);
+          const formattedDate = date.toISOString().split('T')[0];
+          document.getElementById("edit-activity-date").value = formattedDate;
+        }
+        
+        // Set time if available
+        if (activityTime) {
+          document.getElementById("edit-activity-time").value = activityTime;
+        }
+        
+        document.getElementById("edit-activity-notes").value = activityNotes || '';
+        
+        // Set the form action to the correct endpoint
+        editActivityForm.action = `/api/activities/${activityId}`;
+        
+        // Show the modal
+        editActivityModal.classList.remove("hidden");
+        editActivityModal.classList.add("flex");
+      });
+    });
+  }
+
+  // Close edit activity modal functions
+  function closeEditModal() {
+    editActivityModal.classList.add("hidden");
+    editActivityModal.classList.remove("flex");
+    editActivityForm.reset();
+  }
+
+  if (editCloseModalButton) {
+    editCloseModalButton.addEventListener("click", closeEditModal);
+  }
+
+  if (editCancelButton) {
+    editCancelButton.addEventListener("click", closeEditModal);
+  }
 });
 
 // CHARACTER WORK:
@@ -340,6 +540,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
 
 
 // Friend Profile Modal
